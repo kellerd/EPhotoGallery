@@ -2,10 +2,10 @@
   "version": "1.0.0-*",
   "frameworks": {
     "net451": {
-      "wrappedProject": "../../PhotoLibrary/PhotoLibrary.csproj",
+      "wrappedProject": "../../src/PhotoLibrary/PhotoLibrary.csproj",
       "bin": {
-        "assembly": "../../PhotoLibrary/obj/{configuration}/PhotoLibrary.dll",
-        "pdb": "../../PhotoLibrary/obj/{configuration}/PhotoLibrary.pdb"
+        "assembly": "../../src/PhotoLibrary/obj/{configuration}/PhotoLibrary.dll",
+        "pdb": "../../src/PhotoLibrary/obj/{configuration}/PhotoLibrary.pdb"
       },
       "dependencies": {
         "EntityFramework.Core": "7.0.0-rc1-final",
@@ -34,7 +34,8 @@
         "System.Resources.ResourceManager": "4.0.1-beta-23516",
         "System.Runtime": "4.0.21-beta-23516",
         "System.Runtime.Extensions": "4.0.11-beta-23516",
-        "System.Threading": "4.0.11-beta-23516"
+        "System.Threading": "4.0.11-beta-23516",
+        "System.Interactive.Async": "1.0.0-*"
       }
     }
   }

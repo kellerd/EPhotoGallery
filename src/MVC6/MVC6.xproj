@@ -20,7 +20,7 @@
     <DnxInvisibleContent Include="package.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\PhotoLibrary\PhotoLibrary.csproj" />
+    <ProjectReference Include="..\PhotoLibrary\PhotoLibrary.csproj" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>
