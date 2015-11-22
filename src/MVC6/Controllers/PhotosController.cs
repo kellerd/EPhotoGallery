@@ -1,4 +1,4 @@
-﻿using BatchUpdateNicePhotoGallery;
+﻿using PhotoLibrary;
 using Microsoft.AspNet.Mvc;
 using MVC6RC1.Controllers;
 using PagedList;

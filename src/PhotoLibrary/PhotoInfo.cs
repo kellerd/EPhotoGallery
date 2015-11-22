@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Data.Entity;
 
-namespace BatchUpdateNicePhotoGallery
+namespace PhotoLibrary
 {
     public class PhotoContext : DbContext
     {
