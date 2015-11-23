@@ -3,12 +3,13 @@
 'use strict'
 module PhotoSwipeLoad {
     export class PhotoSwipeLoad {
-        constructor(public apiKey, public photosetId, public galleryOptions, public callback) {
+        constructor(public pid, public galleryOptions, public callback) {
+            this.init();
         }
-        flickrData : PhotoSwipe.Item[];
+        EphotoGalleryData : PhotoSwipe.Item[];
         gallery : PhotoSwipe<any>;
 
-        flickrPhotoSizes = {
+        EphotoGalleryPhotoSizes = {
             240: 'm',
             320: 'n',
             640: 'z',
@@ -18,35 +19,24 @@ module PhotoSwipeLoad {
             2048: 'k',
             2400: 'o' // do not comment this out.
         };
-        currentSize = parseInt(Object.keys(this.flickrPhotoSizes)[0], 10); //start with smallest size
+        currentSize = parseInt(Object.keys(this.EphotoGalleryPhotoSizes)[0], 10); //start with smallest size
         firstResize = true;
 
-
-        xhr(url, callbackFn) {
-            var fnName = 'callback' + Math.floor(Math.random() * 1000001),
-                script = document.createElement('script');
-            callbackFn = callbackFn || function () { };
-            window[fnName] = function (result) { callbackFn(result); };
-            script.src = url + '&jsoncallback=' + fnName;
-            document.getElementsByTagName('head')[0].appendChild(script);
-        };
-
-
-        initGalleryWithCallback(callback) {
+        initGalleryWithCallback = (callback) => {
             callback = callback || function () { };
-            if (!this.flickrData || !this.galleryOptions) {
+            if (!this.EphotoGalleryData || !this.galleryOptions) {
                 return 'You have to initialize everything.';
             }
 
             if (!this.gallery) {
-                this.initGallery(this.flickrData, this.galleryOptions);
+                this.initGallery(this.EphotoGalleryData, this.galleryOptions);
             }
 
             callback(this.gallery);
         }
 
 
-        initGallery(data, galleryOptions) {
+        initGallery = (data, galleryOptions) => {
             // Initializes and opens PhotoSwipe
             var pswpElement = <HTMLElement>document.querySelectorAll('.pswp')[0];
             var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, data, galleryOptions);
@@ -55,7 +45,7 @@ module PhotoSwipeLoad {
             gallery.listen('beforeResize', function () {
                 // gallery.viewportSize.x - width of PhotoSwipe viewport
                 // gallery.viewportSize.y - height of PhotoSwipe viewport
-                // window.devicePixelRatio - ratio between physical pixels and device independent pixels (Number)
+                // window.devicePixelRatio - heightRatio between physical pixels and device independent pixels (Number)
                 //                          1 (regular display), 2 (@2x, retina) ...
 
                 var newSize = 0;
@@ -63,7 +53,7 @@ module PhotoSwipeLoad {
                 var realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio; // calculate real pixels when size changes
 
 
-                for (var size in this.flickrPhotoSizes) {
+                for (var size in this.EphotoGalleryPhotoSizes) {
                     if (realViewportWidth > size) {
                         newSize = parseInt(size, 10);
                     }
@@ -88,7 +78,7 @@ module PhotoSwipeLoad {
             gallery.listen('gettingData', function (index, item) {
 
                 // Set image source & size based on real viewport width
-                var ext = this.flickrPhotoSizes[this.currentSize];
+                var ext = this.EphotoGalleryPhotoSizes[this.currentSize];
                 item.src = item.sizeData[ext].src || item['o'].src;
                 item.w = item.sizeData[ext].w || item['o'].w;
                 item.h = item.sizeData[ext].h || item['o'].h;
@@ -108,10 +98,10 @@ module PhotoSwipeLoad {
 
 
 
-        init (apiKey, photosetId, galleryOptions, callback) {
-            var sizes = this.flickrPhotoSizes;
+        init = () => {
+            var sizes = this.EphotoGalleryPhotoSizes;
 
-            this.galleryOptions = galleryOptions || {};
+            this.galleryOptions = this.galleryOptions || {};
 
             if (!('getImageURLForShare' in this.galleryOptions)) {
                 this.galleryOptions.getImageURLForShare = function (shareButtonData) {
@@ -119,41 +109,40 @@ module PhotoSwipeLoad {
                 };
             }
 
-            callback = callback || function () { };
+            this.callback = this.callback || function () { };
 
-            if (this.flickrData) {
-                this.initGallery(this.flickrData, this.galleryOptions);
-                callback(this.gallery);
+            if (this.EphotoGalleryData) {
+                this.initGallery(this.EphotoGalleryData, this.galleryOptions);
+                this.callback(this.gallery);
             }
             else {
-                var sizeParams = Object.keys(sizes).map(function (size) { return 'url_' + sizes[size]; }).join(','),
-                    url = 'https://api.flickr.com/services/rest?method=flickr.photosets.getPhotos&api_key=' + apiKey + '&photoset_id=' +
-                        photosetId + '&extras=' + sizeParams + '&format=json';
+                var url = "Data/" + (this.pid || 1).toString();
 
-                this.xhr(url, function (data) {
-                    var i
-                    var items : Array<PhotoSwipe.Item> = [];
-
-                    for (i in data.photoset.photo) {
-                        var photo = data.photoset.photo[i];
-                        var item: PhotoSwipe.Item = { src:"", w:0,h:0,sizeData : {} };
+                $.get(url, (data) => {
+                    var i, items: Array<PhotoSwipe.Item> = [];
+                    
+                    for (i in data) {
+                        var photo = data[i];
+                        var item: PhotoSwipe.Item = { src: "", w: 0, h: 0, sizeData: {} };
                         var size, ext;
                         for (size in sizes) {
                             ext = sizes[size];
+                            let w = photo.heightRatio <= 1 ? parseFloat(size) : parseFloat(size) * photo.heightRatio;
+                            let h = photo.heightRatio > 1 ? parseFloat(size) : parseFloat(size) * photo.heightRatio;
                             item.sizeData[ext] = {
-                                src: photo['url_' + ext],
-                                w: photo['width_' + ext] / 2,
-                                h: photo['height_' + ext] * data.photoset.photo[i].ratio,
+                                src: photo.uri.replace("_o", "_"+ext),
+                                w: w,
+                                h: h,
                             }
-                            item.original_src = photo.url_o;
+                            item.original_src = photo.uri.replace("_o","");
                         }
                         items.push(item);
                     };
 
-                    this.flickrData = items;
+                    this.EphotoGalleryData = items;
 
-                    this.initGallery(this.flickrData, this.galleryOptions);
-                    callback(this.gallery);
+                    this.initGallery(this.EphotoGalleryData, this.galleryOptions);
+                    this.callback(this.gallery);
                 });
             }
         };

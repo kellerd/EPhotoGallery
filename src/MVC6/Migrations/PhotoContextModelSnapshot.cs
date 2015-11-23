@@ -22,7 +22,7 @@ namespace MVC6.Migrations
 
                     b.Property<DateTime>("date");
 
-                    b.Property<decimal>("heightRatio");
+                    b.Property<decimal>("ratio");
 
                     b.Property<int>("rating");
 

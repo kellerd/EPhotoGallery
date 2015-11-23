@@ -37,7 +37,7 @@ namespace BatchUpdateNicePhotoGallery
                 var uri = f.Substring(len);
                 var image = System.Drawing.Image.FromFile(f);
                 var heightRatio = (decimal)image.Height / (decimal)image.Width;
-                return new PhotoInfo { uri = uri, heightRatio = heightRatio, rating = rating, tags = tags, date = date };
+                return new PhotoInfo { uri = PhotoInfo.baseuri + uri.Replace("\\", "/"), heightRatio = heightRatio, rating = rating, tags = tags, date = date };
             }).ToDictionary(p => p.uri);
             using (PhotoContext context = new PhotoContext())
             {

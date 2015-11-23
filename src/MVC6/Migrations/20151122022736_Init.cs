@@ -14,7 +14,7 @@ namespace MVC6.Migrations
                 {
                     uri = table.Column<string>(nullable: false),
                     date = table.Column<DateTime>(nullable: false),
-                    heightRatio = table.Column<decimal>(nullable: false),
+                    ratio = table.Column<decimal>(nullable: false),
                     rating = table.Column<int>(nullable: false),
                     tags = table.Column<string>(nullable: true)
                 },

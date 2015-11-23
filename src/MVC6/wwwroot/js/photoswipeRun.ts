@@ -6,14 +6,25 @@ module PhotoSwipeRun {
                 this.onload();
             }
             else {
-                document.addEventListener('DOMContentLoaded', onload);
+                document.addEventListener('DOMContentLoaded', this.onload);
             }
         }
 
         onload = () => {
-            var flickrApiKey = 'FILL-ME-IN',
-                flickrPhotosetId = 'FILL-ME-IN',
-                reopenLink = document.getElementById('reopenGallery'), // link to reopen gallery if it is closed
+
+            var vars = [], hash;
+            var q = document.URL.split('?')[1];
+            if (q != undefined) {
+                var qs = q.split('&');
+                for (var i = 0; i < qs.length; i++) {
+                    hash = qs[i].split('=');
+                    vars.push(hash[1]);
+                    vars[hash[0]] = hash[1];
+                }
+            }
+            var pid = vars["pid"] ? vars["pid"] : "1";
+
+            var reopenLink = document.getElementById('reopenGallery'), // link to reopen gallery if it is closed
                 lastItemIndex, // save what image we were on, reopen at the same image
                 galleryOptions = {
                     index: 0,
@@ -29,7 +40,7 @@ module PhotoSwipeRun {
                     }
                     reopenLink.style.display = '';
                 };
-            var psl = new PhotoSwipeLoad.PhotoSwipeLoad(flickrApiKey, flickrPhotosetId, galleryOptions, gallerySetup);
+            var psl = new PhotoSwipeLoad.PhotoSwipeLoad(pid, galleryOptions, gallerySetup);
             reopenLink.addEventListener('click', function () { psl.initGalleryWithCallback(gallerySetup); });
         };
     }
