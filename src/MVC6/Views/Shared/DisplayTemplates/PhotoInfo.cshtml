@@ -1,0 +1,7 @@
+﻿@model PhotoLibrary.PhotoInfo
+<figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <a href="@Model.uri.Replace("o_", "")" itemprop="contentUrl" data-size="@Model.dimentions()">
+        <img src="@Model.uri.Replace("o_", "m_")" itemprop="thumbnail" alt="@Model.tags" class="thumbnail" />
+    </a>
+    <figcaption itemprop="caption description">Rating: @Model.rating - Description: @Model.tags</figcaption>
+</figure>

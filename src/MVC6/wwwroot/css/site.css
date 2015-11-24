@@ -46,7 +46,7 @@ textarea {
   display: block;
   float: left;
   margin: 0 5px 5px 0;
-  width: 150px;
+  width: 250px;
 }
 .my-gallery figcaption {
   display: none;
@@ -54,4 +54,8 @@ textarea {
 #loadMore {
     background-color:darkslategrey;
     color:aliceblue;
+}
+
+img.thumbnail {
+    width:240px;
 }

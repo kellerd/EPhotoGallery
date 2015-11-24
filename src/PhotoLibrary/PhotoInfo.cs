@@ -31,5 +31,11 @@ namespace PhotoLibrary
         public string tags { get; set; }
         public DateTime date { get; set; }
         public decimal heightRatio { get; set; }
+        public string dimentions() { 
+                var size = 2400;
+                var w = heightRatio <= 1 ? size : Math.Round(size * heightRatio);
+                var h = heightRatio >  1 ? size : Math.Round(size * heightRatio);
+                return w + "x" + h;
+        }
     }
 }

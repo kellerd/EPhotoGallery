@@ -1,35 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNet.Mvc;
+using PhotoLibrary;
+using PagedList;
+using System.Threading.Tasks;
+using Microsoft.Data.Entity;
+using System;
+using System.Collections.Generic;
 
 namespace MVC6.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+
+        private readonly PhotoContext _context;
+        public HomeController(PhotoContext context)
         {
-            return View();
+            _context = context;
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> Index(MVC6RC1.Models.PhotoLibrary model)
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
+            model.photos = await Data(model.PageNumber);
+            return View(model);
         }
 
-        public IActionResult Contact()
+        private async Task<IEnumerable<PhotoInfo>> Data(int pageNumber)
         {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
+            return await _context.PhotoInfos.OrderByDescending(p => p.date).Skip((pageNumber - 1) * 10).Take(10).ToListAsync();
         }
 
-        public IActionResult Error()
+        public async Task<PartialViewResult> PartialLibrary(int pageNumber = 1)
         {
-            return View();
+            return PartialView(await Data(pageNumber));
+        }
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _context.Dispose();
         }
     }
 }
