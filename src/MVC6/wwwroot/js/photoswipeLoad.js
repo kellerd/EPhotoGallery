@@ -4,9 +4,9 @@
 var PhotoSwipeLoad;
 (function (PhotoSwipeLoad_1) {
     var PhotoSwipeLoad = (function () {
-        function PhotoSwipeLoad(pid, galleryOptions, callback) {
+        function PhotoSwipeLoad(gid, galleryOptions, callback) {
             var _this = this;
-            this.pid = pid;
+            this.gid = gid;
             this.galleryOptions = galleryOptions;
             this.callback = callback;
             this.EphotoGalleryPhotoSizes = {
@@ -44,26 +44,26 @@ var PhotoSwipeLoad;
                     var newSize = 0;
                     var imageSrcWillChange = false;
                     var realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio; // calculate real pixels when size changes
-                    for (var size in this.EphotoGalleryPhotoSizes) {
+                    for (var size in _this.EphotoGalleryPhotoSizes) {
                         if (realViewportWidth > size) {
                             newSize = parseInt(size, 10);
                         }
                     }
-                    if (this.currentSize < newSize) {
+                    if (_this.currentSize < newSize) {
                         imageSrcWillChange = true;
-                        this.currentSize = newSize;
+                        _this.currentSize = newSize;
                     }
                     // Invalidate items only when source is changed and when it's not the first update
-                    if (imageSrcWillChange && !this.firstResize) {
+                    if (imageSrcWillChange && !_this.firstResize) {
                         // invalidateCurrItems sets a flag on slides that are in DOM, which will force update of content (image) on window.resize.
                         gallery.invalidateCurrItems();
                     }
-                    this.firstResize = false;
+                    _this.firstResize = false;
                 });
                 // gettingData event fires each time PhotoSwipe retrieves image source & size
                 gallery.listen('gettingData', function (index, item) {
                     // Set image source & size based on real viewport width
-                    var ext = this.EphotoGalleryPhotoSizes[this.currentSize];
+                    var ext = _this.EphotoGalleryPhotoSizes[_this.currentSize];
                     item.src = item.sizeData[ext].src || item['o'].src;
                     item.w = item.sizeData[ext].w || item['o'].w;
                     item.h = item.sizeData[ext].h || item['o'].h;
@@ -72,7 +72,7 @@ var PhotoSwipeLoad;
                     // Just avoid http requests in this listener, as it fires quite often
                 });
                 gallery.listen('destroy', function () {
-                    this.gallery = undefined;
+                    _this.gallery = undefined;
                 });
                 _this.gallery = gallery;
             };
@@ -90,7 +90,7 @@ var PhotoSwipeLoad;
                     _this.callback(_this.gallery);
                 }
                 else {
-                    var url = "Data/" + (_this.pid || 1).toString();
+                    var url = "Data/" + (_this.gid || 1).toString();
                     $.get(url, function (data) {
                         var i, items = [];
                         for (i in data) {

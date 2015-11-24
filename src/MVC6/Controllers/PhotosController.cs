@@ -1,9 +1,8 @@
 ﻿using PhotoLibrary;
 using Microsoft.AspNet.Mvc;
-using MVC6RC1.Controllers;
-using PagedList;
 using System.Linq;
 using System;
+using PagedList;
 
 namespace MVC6.Controllers
 {

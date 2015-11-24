@@ -3,7 +3,7 @@
 'use strict'
 module PhotoSwipeLoad {
     export class PhotoSwipeLoad {
-        constructor(public pid, public galleryOptions, public callback) {
+        constructor(public gid, public galleryOptions, public callback) {
             this.init();
         }
         EphotoGalleryData : PhotoSwipe.Item[];
@@ -23,7 +23,7 @@ module PhotoSwipeLoad {
         firstResize = true;
 
         initGalleryWithCallback = (callback) => {
-            callback = callback || function () { };
+            callback = callback || function() { };
             if (!this.EphotoGalleryData || !this.galleryOptions) {
                 return 'You have to initialize everything.';
             }
@@ -42,7 +42,7 @@ module PhotoSwipeLoad {
             var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, data, galleryOptions);
 
             // beforeResize event fires each time size of gallery viewport updates
-            gallery.listen('beforeResize', function () {
+            gallery.listen('beforeResize', () => {
                 // gallery.viewportSize.x - width of PhotoSwipe viewport
                 // gallery.viewportSize.y - height of PhotoSwipe viewport
                 // window.devicePixelRatio - heightRatio between physical pixels and device independent pixels (Number)
@@ -75,7 +75,7 @@ module PhotoSwipeLoad {
 
 
             // gettingData event fires each time PhotoSwipe retrieves image source & size
-            gallery.listen('gettingData', function (index, item) {
+            gallery.listen('gettingData',  (index, item) => {
 
                 // Set image source & size based on real viewport width
                 var ext = this.EphotoGalleryPhotoSizes[this.currentSize];
@@ -88,7 +88,7 @@ module PhotoSwipeLoad {
                 // Just avoid http requests in this listener, as it fires quite often
             });
 
-            gallery.listen('destroy', function () {
+            gallery.listen('destroy', () => {
                 this.gallery = undefined;
             });
 
@@ -109,14 +109,14 @@ module PhotoSwipeLoad {
                 };
             }
 
-            this.callback = this.callback || function () { };
+            this.callback = this.callback || function() { };
 
             if (this.EphotoGalleryData) {
                 this.initGallery(this.EphotoGalleryData, this.galleryOptions);
                 this.callback(this.gallery);
             }
             else {
-                var url = "Data/" + (this.pid || 1).toString();
+                var url = "Data/" + (this.gid || 1).toString();
 
                 $.get(url, (data) => {
                     var i, items: Array<PhotoSwipe.Item> = [];
