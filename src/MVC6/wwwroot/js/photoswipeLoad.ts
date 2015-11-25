@@ -6,8 +6,8 @@ module PhotoSwipeLoad {
         constructor(public gid, public galleryOptions, public callback) {
             this.init();
         }
-        EphotoGalleryData : PhotoSwipe.Item[];
-        gallery : PhotoSwipe<any>;
+        EphotoGalleryData: PhotoSwipe.Item[];
+        gallery: PhotoSwipe<any>;
 
         EphotoGalleryPhotoSizes = {
             240: 'm',
@@ -23,18 +23,70 @@ module PhotoSwipeLoad {
         firstResize = true;
 
         initGalleryWithCallback = (callback) => {
-            callback = callback || function() { };
+            callback = callback || function () { };
             if (!this.EphotoGalleryData || !this.galleryOptions) {
                 return 'You have to initialize everything.';
             }
-
             if (!this.gallery) {
                 this.initGallery(this.EphotoGalleryData, this.galleryOptions);
             }
-
             callback(this.gallery);
         }
 
+        loadMoreCallback = (evt) => {
+            evt.preventDefault();
+            evt.stopPropagation();
+            var $loadMore = $("#loadMore");
+            var $moreContent = $('#moreContent'),
+                url = (<HTMLAnchorElement>$loadMore.get(0)).href;
+            var $lastElement = $moreContent.prev();
+
+            $.get(url, (data) => {
+                $moreContent.replaceWith(data);
+            }).then((data, textStatus, jqXHR) => {
+                var i = ((this.gallery ? this.gallery.items : this.EphotoGalleryData) || []) .length;
+                for ($lastElement = ($lastElement.length == 0) ? $(".my-gallery").children().first() : $lastElement.next(); ($lastElement.get(0) != undefined); $lastElement = $lastElement.next()) {
+                    var that = this;
+                    var photoLink = $lastElement.children("a");
+                    photoLink.on("click", function(evt) {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        var ind = (<HTMLElement>this).parentNode.attributes.getNamedItem('data-pswp-uid').value;
+                        if (!that.gallery) {
+                            that.galleryOptions.index = ind;
+                            that.initGallery(that.EphotoGalleryData, that.galleryOptions);
+                            that.callback(that.gallery);
+                        }
+                        that.gallery.invalidateCurrItems();
+                        that.gallery.goTo(parseInt(ind));
+                    });
+                    var photoData = photoLink.data("size");
+                    if (photoData) {
+                        $lastElement.attr('data-pswp-uid', i++);
+                        var sizeSplit = photoLink.data("size").split("x");
+                        var heightRatio = parseFloat(sizeSplit[1]) / parseFloat(sizeSplit[0]);
+                        var item: PhotoSwipe.Item = { src: "", w: 0, h: 0, sizeData: {} };
+                        var size,
+                            ext,
+                            sizes = this.EphotoGalleryPhotoSizes;
+                        for (size in sizes) {
+                            ext = sizes[size];
+                            var photo = <HTMLImageElement>(photoLink.children("img").get(0));
+                            let w = heightRatio <= 1 ? parseFloat(size) : parseFloat(size) * heightRatio;
+                            let h = heightRatio > 1 ? parseFloat(size) : parseFloat(size) * heightRatio;
+                            item.sizeData[ext] = {
+                                src: photo.src.replace("m_", ext + "_"),
+                                w: w,
+                                h: h,
+                            };
+                            (<any>item).original_src = (<HTMLAnchorElement>photoLink.get(0)).href.replace("o_", "");
+                        }
+                        this.EphotoGalleryData.push(item);
+                    }
+                }
+                $("#loadMore").on('click', this.loadMoreCallback);
+            });
+        };
 
         initGallery = (data, galleryOptions) => {
             // Initializes and opens PhotoSwipe
@@ -75,7 +127,7 @@ module PhotoSwipeLoad {
 
 
             // gettingData event fires each time PhotoSwipe retrieves image source & size
-            gallery.listen('gettingData',  (index, item) => {
+            gallery.listen('gettingData', (index, item) => {
 
                 // Set image source & size based on real viewport width
                 var ext = this.EphotoGalleryPhotoSizes[this.currentSize];
@@ -99,8 +151,7 @@ module PhotoSwipeLoad {
 
 
         init = () => {
-            var sizes = this.EphotoGalleryPhotoSizes;
-
+            
             this.galleryOptions = this.galleryOptions || {};
 
             if (!('getImageURLForShare' in this.galleryOptions)) {
@@ -109,42 +160,15 @@ module PhotoSwipeLoad {
                 };
             }
 
-            this.callback = this.callback || function() { };
+            this.callback = this.callback || function () { };
 
-            if (this.EphotoGalleryData) {
-                this.initGallery(this.EphotoGalleryData, this.galleryOptions);
-                this.callback(this.gallery);
+            $("#loadMore").on('click', this.loadMoreCallback);
+
+            if (!this.EphotoGalleryData) {
+                this.EphotoGalleryData = <PhotoSwipe.Item[]>[];
+                $("#loadMore").click();
             }
-            else {
-                var url = "Data/" + (this.gid || 1).toString();
 
-                $.get(url, (data) => {
-                    var i, items: Array<PhotoSwipe.Item> = [];
-                    
-                    for (i in data) {
-                        var photo = data[i];
-                        var item: PhotoSwipe.Item = { src: "", w: 0, h: 0, sizeData: {} };
-                        var size, ext;
-                        for (size in sizes) {
-                            ext = sizes[size];
-                            let w = photo.heightRatio <= 1 ? parseFloat(size) : parseFloat(size) * photo.heightRatio;
-                            let h = photo.heightRatio > 1 ? parseFloat(size) : parseFloat(size) * photo.heightRatio;
-                            item.sizeData[ext] = {
-                                src: photo.uri.replace("_o", "_"+ext),
-                                w: w,
-                                h: h,
-                            }
-                            item.original_src = photo.uri.replace("_o","");
-                        }
-                        items.push(item);
-                    };
-
-                    this.EphotoGalleryData = items;
-
-                    this.initGallery(this.EphotoGalleryData, this.galleryOptions);
-                    this.callback(this.gallery);
-                });
-            }
         };
     };
 }

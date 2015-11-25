@@ -31,6 +31,56 @@ var PhotoSwipeLoad;
                 }
                 callback(_this.gallery);
             };
+            this.loadMoreCallback = function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var $loadMore = $("#loadMore");
+                var $moreContent = $('#moreContent'), url = $loadMore.get(0).href;
+                var $lastElement = $moreContent.prev();
+                $.get(url, function (data) {
+                    $moreContent.replaceWith(data);
+                }).then(function (data, textStatus, jqXHR) {
+                    var i = ((_this.gallery ? _this.gallery.items : _this.EphotoGalleryData) || []).length;
+                    for ($lastElement = ($lastElement.length == 0) ? $(".my-gallery").children().first() : $lastElement.next(); ($lastElement.get(0) != undefined); $lastElement = $lastElement.next()) {
+                        var that = _this;
+                        var photoLink = $lastElement.children("a");
+                        photoLink.on("click", function (evt) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            var ind = this.parentNode.attributes.getNamedItem('data-pswp-uid').value;
+                            if (!that.gallery) {
+                                that.galleryOptions.index = ind;
+                                that.initGallery(that.EphotoGalleryData, that.galleryOptions);
+                                that.callback(that.gallery);
+                            }
+                            that.gallery.invalidateCurrItems();
+                            that.gallery.goTo(parseInt(ind));
+                        });
+                        var photoData = photoLink.data("size");
+                        if (photoData) {
+                            $lastElement.attr('data-pswp-uid', i++);
+                            var sizeSplit = photoLink.data("size").split("x");
+                            var heightRatio = parseFloat(sizeSplit[1]) / parseFloat(sizeSplit[0]);
+                            var item = { src: "", w: 0, h: 0, sizeData: {} };
+                            var size, ext, sizes = _this.EphotoGalleryPhotoSizes;
+                            for (size in sizes) {
+                                ext = sizes[size];
+                                var photo = (photoLink.children("img").get(0));
+                                var w = heightRatio <= 1 ? parseFloat(size) : parseFloat(size) * heightRatio;
+                                var h = heightRatio > 1 ? parseFloat(size) : parseFloat(size) * heightRatio;
+                                item.sizeData[ext] = {
+                                    src: photo.src.replace("m_", ext + "_"),
+                                    w: w,
+                                    h: h,
+                                };
+                                item.original_src = photoLink.get(0).href.replace("o_", "");
+                            }
+                            _this.EphotoGalleryData.push(item);
+                        }
+                    }
+                    $("#loadMore").on('click', _this.loadMoreCallback);
+                });
+            };
             this.initGallery = function (data, galleryOptions) {
                 // Initializes and opens PhotoSwipe
                 var pswpElement = document.querySelectorAll('.pswp')[0];
@@ -77,7 +127,6 @@ var PhotoSwipeLoad;
                 _this.gallery = gallery;
             };
             this.init = function () {
-                var sizes = _this.EphotoGalleryPhotoSizes;
                 _this.galleryOptions = _this.galleryOptions || {};
                 if (!('getImageURLForShare' in _this.galleryOptions)) {
                     _this.galleryOptions.getImageURLForShare = function (shareButtonData) {
@@ -85,36 +134,10 @@ var PhotoSwipeLoad;
                     };
                 }
                 _this.callback = _this.callback || function () { };
-                if (_this.EphotoGalleryData) {
-                    _this.initGallery(_this.EphotoGalleryData, _this.galleryOptions);
-                    _this.callback(_this.gallery);
-                }
-                else {
-                    var url = "Data/" + (_this.gid || 1).toString();
-                    $.get(url, function (data) {
-                        var i, items = [];
-                        for (i in data) {
-                            var photo = data[i];
-                            var item = { src: "", w: 0, h: 0, sizeData: {} };
-                            var size, ext;
-                            for (size in sizes) {
-                                ext = sizes[size];
-                                var w = photo.heightRatio <= 1 ? parseFloat(size) : parseFloat(size) * photo.heightRatio;
-                                var h = photo.heightRatio > 1 ? parseFloat(size) : parseFloat(size) * photo.heightRatio;
-                                item.sizeData[ext] = {
-                                    src: photo.uri.replace("_o", "_" + ext),
-                                    w: w,
-                                    h: h,
-                                };
-                                item.original_src = photo.uri.replace("_o", "");
-                            }
-                            items.push(item);
-                        }
-                        ;
-                        _this.EphotoGalleryData = items;
-                        _this.initGallery(_this.EphotoGalleryData, _this.galleryOptions);
-                        _this.callback(_this.gallery);
-                    });
+                $("#loadMore").on('click', _this.loadMoreCallback);
+                if (!_this.EphotoGalleryData) {
+                    _this.EphotoGalleryData = [];
+                    $("#loadMore").click();
                 }
             };
             this.init();

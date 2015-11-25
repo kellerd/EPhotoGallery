@@ -1,7 +1,15 @@
-﻿@model IEnumerable<PhotoLibrary.PhotoInfo>
-@foreach (var p in Model)
+﻿@model MVC6RC1.Models.PhotoLibrary
+@if (Model.photos != null)
 {
-    @Html.DisplayFor(m => p);
+    @foreach (var p in Model.photos)
+    {
+        @Html.DisplayFor(m => p);
+    }
 }
-
-
+<div id="moreContent">
+    <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+        <a asp-controller="Home"
+           asp-action="@nameof(MVC6.Controllers.HomeController.PartialLibrary)"
+           asp-route-pageNumber="@(Model.PageNumber + 1)" id="loadMore" class="thumbnail">Load More</a>
+    </figure>
+</div>

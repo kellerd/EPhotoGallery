@@ -1,11 +1,11 @@
-﻿using System.Linq;
+﻿
+
 using Microsoft.AspNet.Mvc;
-using PhotoLibrary;
-using PagedList;
-using System.Threading.Tasks;
 using Microsoft.Data.Entity;
-using System;
+using PhotoLibrary;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MVC6.Controllers
 {
@@ -20,18 +20,17 @@ namespace MVC6.Controllers
 
         public async Task<IActionResult> Index(MVC6RC1.Models.PhotoLibrary model)
         {
-            model.photos = await Data(model.PageNumber);
             return View(model);
         }
 
         private async Task<IEnumerable<PhotoInfo>> Data(int pageNumber)
         {
-            return await _context.PhotoInfos.OrderByDescending(p => p.date).Skip((pageNumber - 1) * 10).Take(10).ToListAsync();
+            return await _context.PhotoInfos.OrderByDescending(p => p.date).Skip((pageNumber - 1) * 11).Take(11).ToListAsync();
         }
 
         public async Task<PartialViewResult> PartialLibrary(int pageNumber = 1)
         {
-            return PartialView(await Data(pageNumber));
+            return PartialView( new MVC6RC1.Models.PhotoLibrary { photos = await Data(pageNumber), PageNumber = pageNumber + 1 });
         }
         protected override void Dispose(bool disposing)
         {

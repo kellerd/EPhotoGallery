@@ -59,3 +59,7 @@ textarea {
 img.thumbnail {
     width:240px;
 }
+a.thumbnail {
+    width:240px;
+    height:163;
+}
