@@ -6,6 +6,7 @@ using PhotoLibrary;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace MVC6.Controllers
 {
@@ -13,13 +14,18 @@ namespace MVC6.Controllers
     {
 
         private readonly PhotoContext _context;
-        public HomeController(PhotoContext context)
+
+        public IConfigurationRoot Configuration { get; private set; }
+
+        public HomeController(IConfigurationRoot Configuration)
         {
-            _context = context;
+            this.Configuration = Configuration;
+            //_context = context;
         }
 
         public IActionResult Index(MVC6RC1.Models.PhotoLibrary model)
         {
+            model.ConnStr = Configuration["Data:DefaultConnection:ConnectionString"];
             return View(model);
         }
 
@@ -35,7 +41,7 @@ namespace MVC6.Controllers
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            _context.Dispose();
+            //_context.Dispose();
         }
     }
 }
