@@ -2,6 +2,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using Microsoft.Data.Entity;
+using System.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BatchUpdateNicePhotoGallery
 {
@@ -39,36 +42,33 @@ namespace BatchUpdateNicePhotoGallery
                 var heightRatio = (decimal)image.Height / (decimal)image.Width;
                 return new PhotoInfo { uri = PhotoInfo.baseuri + uri.Replace("\\", "/"), heightRatio = heightRatio, rating = rating, tags = tags, date = date };
             }).ToDictionary(p => p.uri);
-            using (PhotoContext context = new PhotoContext())
+            var services = new ServiceCollection();
+            services.AddEntityFramework().AddSqlServer().AddDbContext<PhotoContext>(optionsBuilder =>
+                                                optionsBuilder.
+                                                    UseSqlServer(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString).
+                                                    MigrationsAssembly("MVC6"));
+
+            using (PhotoContext context = services.BuildServiceProvider().GetService<PhotoContext>())
             {
                 var dbItems = context.PhotoInfos.ToDictionary(p => p.uri);
                 context.RemoveRange(dbItems.Values.Where(p => !fileSystemItems.ContainsKey(p.uri)));
-                try
+                foreach (var item in fileSystemItems.Values)
                 {
-                    foreach (var item in fileSystemItems.Values)
+                    PhotoInfo dbItem;
+                    if (dbItems.TryGetValue(item.uri, out dbItem))
                     {
-                        PhotoInfo dbItem;
-                        if (dbItems.TryGetValue(item.uri, out dbItem))
-                        {
-                            dbItem.date = item.date;
-                            dbItem.rating = item.rating;
-                            dbItem.tags = item.tags;
-                            dbItem.heightRatio = item.heightRatio;
-                            context.Update(dbItem);
-                        }
-                        else
-                        {
-                            context.Add(item);
-                        }
+                        dbItem.date = item.date;
+                        dbItem.rating = item.rating;
+                        dbItem.tags = item.tags;
+                        dbItem.heightRatio = item.heightRatio;
+                        context.Update(dbItem);
                     }
-                    context.SaveChanges();
+                    else
+                    {
+                        context.Add(item);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.ReadLine();
-                    throw;
-                }
-
+                context.SaveChanges();
             }
         }
     }

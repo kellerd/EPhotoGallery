@@ -18,7 +18,7 @@ namespace MVC6.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(MVC6RC1.Models.PhotoLibrary model)
+        public IActionResult Index(MVC6RC1.Models.PhotoLibrary model)
         {
             return View(model);
         }

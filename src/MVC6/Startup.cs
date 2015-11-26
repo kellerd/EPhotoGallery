@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PhotoLibrary;
+using Microsoft.Data.Entity;
 
 namespace MVC6
 {
@@ -18,7 +19,8 @@ namespace MVC6
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
+                .AddEnvironmentVariables()
+                .AddUserSecrets();
             Configuration = builder.Build();
         }
 
@@ -32,7 +34,10 @@ namespace MVC6
             services.
                 AddEntityFramework().
                 AddSqlServer().
-                AddDbContext<PhotoContext>();
+                AddDbContext<PhotoContext>(optionsBuilder =>
+                                                optionsBuilder.
+                                                    UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]).
+                                                    MigrationsAssembly("MVC6"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

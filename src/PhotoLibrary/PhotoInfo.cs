@@ -15,12 +15,6 @@ namespace PhotoLibrary
 
             modelBuilder.Entity<PhotoInfo>().HasKey(p => p.uri);
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.
-                UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EKellerPhotos;Trusted_Connection=True;").
-                MigrationsAssembly("MVC6");
-        }
 
     }
     public class PhotoInfo
