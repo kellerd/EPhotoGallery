@@ -23,9 +23,8 @@ namespace MVC6.Controllers
             //_context = context;
         }
 
-        public IActionResult Index(MVC6RC1.Models.PhotoLibrary model)
+        public IActionResult Index(Models.PhotoLibrary model)
         {
-            model.ConnStr = Configuration["Data:DefaultConnection:ConnectionString"];
             return View(model);
         }
 
@@ -36,7 +35,7 @@ namespace MVC6.Controllers
 
         public async Task<PartialViewResult> PartialLibrary(int pageNumber = 1)
         {
-            return PartialView( new MVC6RC1.Models.PhotoLibrary { photos = await Data(pageNumber), PageNumber = pageNumber + 1 });
+            return PartialView( new Models.PhotoLibrary { photos = await Data(pageNumber), PageNumber = pageNumber + 1 });
         }
         protected override void Dispose(bool disposing)
         {

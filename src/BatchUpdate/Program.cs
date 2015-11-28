@@ -19,7 +19,7 @@ namespace BatchUpdateNicePhotoGallery
         static void Main(string[] args)
         {
             var len = path.Length;
-            var fileSystemItems = Directory.EnumerateFiles(Path.Combine(path, Elizabeth), "o_*", SearchOption.AllDirectories).AsParallel().Select(f =>
+            var fileSystemItems = Directory.EnumerateFiles(Path.Combine(path, Elizabeth), "o_*", SearchOption.AllDirectories).Select(f =>
             {
                 var text = File.ReadAllText(f.Replace("o_", ""));
                 var sourceDirectoryLength = path.Length + Elizabeth.Length;
@@ -36,7 +36,7 @@ namespace BatchUpdateNicePhotoGallery
                 var split2 = text.IndexOf(xmpRating);
                 int rating = int.Parse(split2 > -1
                                                     ? text.Substring(split2 + xmpRating.Length, 1)
-                                                    : string.Empty);
+                                                    : "0");
                 var uri = f.Substring(len);
                 var image = System.Drawing.Image.FromFile(f);
                 var heightRatio = (decimal)image.Height / (decimal)image.Width;

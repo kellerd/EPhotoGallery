@@ -1,6 +1,5 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="../gulpfile.js" />
-/// <reference path="js/photoswipe2.js" />
 /// <reference path="js/photoswipeload.js" />
 /// <reference path="js/photoswiperun.js" />
 /// <reference path="js/site.js" />
