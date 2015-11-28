@@ -1,6 +1,6 @@
-﻿@model MVC6RC1.Models.PhotoLibrary
+﻿@model Models.PhotoLibrary
 <div class="my-gallery" itemscope itemtype="http://schema.org/ImageGallery" class="row">
-    @await Html.PartialAsync(nameof(MVC6.Controllers.HomeController.PartialLibrary), Model)
+    @Html.Partial(nameof(MVC5.Controllers.HomeController.PartialLibrary), Model)
 </div>
 
 
@@ -70,15 +70,8 @@
 
 </div>
 
-<environment names="Development">
-    <script src="~/lib/photoswipe/dist/photoswipe.js"></script>
-    <script src="~/lib/photoswipe/dist/photoswipe-ui-default.js"></script>
-    <script src="~/js/photoswipeload.js"></script>
-        <script src="~/js/photoswiperun.js"></script>
-</environment>
-<environment names="Staging,Production">
-    <script src="~/lib/photoswipe/dist/photoswipe.min.js"></script>
-    <script src="~/lib/photoswipe/dist/photoswipe-ui-default.min.js"></script>
-    <script src="~/js/photoswipeload.min.js"></script>
-    <script src="~/js/photoswiperun.min.js"></script>
-</environment>
+
+<script src="~/Scripts/photoswipe/dist/photoswipe.min.js"></script>
+<script src="~/Scripts/photoswipe/dist/photoswipe-ui-default.min.js"></script>
+<script src="~/Scripts/photoswipeload.js"></script>
+<script src="~/Scripts/photoswiperun.js"></script>

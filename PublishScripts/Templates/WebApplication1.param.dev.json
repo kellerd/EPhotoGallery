@@ -1,0 +1,32 @@
+{
+  "siteName": {
+    "value": "ekellerphotos"
+  },
+  "hostingPlanName": {
+    "value": "ekellerphotos"
+  },
+  "siteLocation": {
+    "value": "East US"
+  },
+  "sku": {
+    "value": "Free"
+  },
+  "workerSize": {
+    "value": "0"
+  },
+  "serverName": {
+    "value": "ekellerphotos"
+  },
+  "serverLocation": {
+    "value": "East US"
+  },
+  "administratorLogin": {
+    "value": "kellerd"
+  },
+  "administratorLoginPassword": {
+    "value": "#$%silver7"
+  },
+  "databaseName": {
+    "value": "ekellerphotos_db"
+  }
+}

@@ -1,0 +1,17 @@
+﻿@model Models.PhotoLibrary
+
+@{
+    ViewBag.Title = "Photos";
+}
+<link href="~/Scripts/photoswipe/dist/photoswipe.css" rel="stylesheet" />
+<!-- Skin CSS file (styling of UI - buttons, caption, etc.)
+     In the folder of skin CSS file there are also:
+     - .png and .svg icons sprite,
+     - preloader.gif (for browsers that do not support CSS animations) -->
+<link href="~/Scripts/photoswipe/dist/default-skin/default-skin.css" rel="stylesheet" />
+<!--[if lt IE 9]>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+<![endif]-->
+
+<h2>Photos</h2>
+@Html.DisplayForModel()

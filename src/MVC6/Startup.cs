@@ -15,8 +15,8 @@ namespace MVC6
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables()
-                .AddUserSecrets();
+                .AddEnvironmentVariables();
+               // .AddUserSecrets();
             Configuration = builder.Build();
         }
 

@@ -1,0 +1,13 @@
+﻿@model Models.PhotoLibrary
+@if (Model.photos != null)
+{
+    foreach (var p in Model.photos)
+    {
+        @Html.DisplayFor(m => p);
+    }
+}
+<div id="moreContent">
+    <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+        <a href="@Url.Action(nameof(MVC5.Controllers.HomeController.PartialLibrary), new { pageNumber = Model.PageNumber + 1})" id="loadMore" class="thumbnail">Load More</a>
+    </figure>
+</div>
