@@ -138,6 +138,13 @@ module PhotoSwipeLoad {
                 // Just avoid http requests in this listener, as it fires quite often
             });
 
+            gallery.listen('imageLoadComplete', (index, item) => {
+                if (index >= this.gallery.items.length - 3) {
+                    $("#loadMore").click();
+                    this.gallery.invalidateCurrItems();
+                }
+            });
+
             gallery.listen('destroy', () => {
                 this.gallery = undefined;
             });
