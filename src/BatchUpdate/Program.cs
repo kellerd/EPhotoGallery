@@ -14,7 +14,7 @@ namespace BatchUpdateNicePhotoGallery
         private const string rdfLi = "<rdf:li>";
         private const string xmpRating = "xmp:Rating=\"";
         private const string Elizabeth = @"Elizabeth\";
-        private const string path = @"C:\Users\Dan\Pictures\";
+        private const string path = @"C:\Users\diese\Pictures\";
 
         static void Main(string[] args)
         {
@@ -36,7 +36,7 @@ namespace BatchUpdateNicePhotoGallery
                 var split2 = text.IndexOf(xmpRating);
                 int rating = int.Parse(split2 > -1
                                                     ? text.Substring(split2 + xmpRating.Length, 1)
-                                                    : string.Empty);
+                                                    : "5");
                 var uri = f.Substring(len);
                 var image = System.Drawing.Image.FromFile(f);
                 var heightRatio = (decimal)image.Height / (decimal)image.Width;
